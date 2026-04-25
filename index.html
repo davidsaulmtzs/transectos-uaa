@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Transectos UAA - Analisis Exploratorio</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&display=swap');
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Quicksand',sans-serif;background:linear-gradient(135deg,#FFF9C4 0%,#FFF176 30%,#FFEE58 60%,#FDD835 100%);color:#4E342E;font-size:14px;min-height:100vh}
+.flower{position:fixed;pointer-events:none;z-index:0;opacity:.1;font-size:3rem;animation:ff 6s ease-in-out infinite}
+.flower:nth-child(1){top:5%;left:3%;font-size:4rem}.flower:nth-child(2){top:15%;right:5%;animation-delay:1s;font-size:3.5rem}
+.flower:nth-child(3){top:40%;left:2%;animation-delay:2s}.flower:nth-child(4){top:60%;right:3%;animation-delay:.5s;font-size:3.8rem}
+.flower:nth-child(5){top:80%;left:5%;animation-delay:1.5s}.flower:nth-child(6){top:25%;left:50%;animation-delay:3s;font-size:2.5rem}
+@keyframes ff{0%,100%{transform:translateY(0) rotate(0)}50%{transform:translateY(-15px) rotate(10deg)}}
+header{background:rgba(255,255,255,.92);backdrop-filter:blur(8px);border-bottom:3px solid #FFB300;padding:0 24px;display:flex;align-items:center;justify-content:space-between;height:54px;position:sticky;top:0;z-index:100}
+.brand{font-size:15px;font-weight:700;color:#E65100}.brand span{color:#FFB300;font-weight:400}
+nav{display:flex;gap:4px}
+nav button{padding:6px 16px;border:2px solid #FFB300;background:none;cursor:pointer;border-radius:20px;font-size:12.5px;color:#795548;font-weight:600;font-family:'Quicksand',sans-serif;transition:all .2s}
+nav button.active{background:#FF8F00;color:#fff;border-color:#FF8F00}
+nav button:hover:not(.active){background:#FFF3E0}
+.container{max-width:1100px;margin:0 auto;padding:20px;position:relative;z-index:1}
+.page{display:none}.page.active{display:block}
+.section-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#BF360C;margin-bottom:10px;margin-top:22px}
+.section-label:first-child{margin-top:0}
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px}
+.kpi{background:rgba(255,255,255,.9);border-radius:14px;padding:16px 18px;border:2px solid #FFD54F;box-shadow:0 2px 8px rgba(255,193,7,.15)}
+.kpi-val{font-size:30px;font-weight:700;color:#E65100}
+.kpi-lbl{font-size:11px;color:#795548;margin-top:4px;font-weight:500}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}
+.grid-3-1{display:grid;grid-template-columns:2fr 1fr;gap:12px;margin-bottom:12px}
+.cc{background:rgba(255,255,255,.9);border-radius:14px;padding:18px;border:2px solid #FFD54F;box-shadow:0 2px 8px rgba(255,193,7,.1)}
+.cc.full{margin-bottom:12px}
+.ct{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:#BF360C;margin-bottom:12px}
+.legend{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px;font-size:11px;color:#795548}
+.dot{display:inline-block;width:8px;height:8px;border-radius:2px;margin-right:3px;vertical-align:middle}
+.codebook{background:rgba(255,255,255,.92);border:2px solid #FFD54F;border-radius:14px;overflow:hidden;margin-bottom:14px}
+.codebook table{width:100%;border-collapse:collapse;font-size:12.5px}
+.codebook th{background:#FFF3E0;padding:9px 14px;text-align:left;font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#BF360C;border-bottom:2px solid #FFD54F}
+.codebook td{padding:8px 14px;border-bottom:1px solid #FFF3E0;vertical-align:top}
+.codebook tr:last-child td{border-bottom:none}
+.codebook td:first-child{font-family:monospace;color:#E65100;font-size:11.5px;font-weight:700}
+.codebook td:nth-child(2){color:#4E342E;font-weight:500}
+.code-val{display:inline-flex;align-items:center;gap:5px;margin:2px 4px 2px 0;background:#FFF8E1;border:1px solid #FFD54F;border-radius:6px;padding:2px 8px;font-size:11px;font-family:monospace}
+.code-val b{color:#E65100}.code-val span{color:#795548}
+.stats-tbl{width:100%;border-collapse:collapse;font-size:12.5px;background:rgba(255,255,255,.92);border-radius:14px;overflow:hidden;border:2px solid #FFD54F}
+.stats-tbl th{background:#FFF3E0;padding:9px 14px;text-align:left;font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#BF360C;border-bottom:2px solid #FFD54F}
+.stats-tbl th:not(:first-child){text-align:center}
+.stats-tbl td{padding:8px 14px;border-bottom:1px solid #FFF3E0;color:#4E342E}
+.stats-tbl td:not(:first-child){text-align:center;font-family:monospace;font-size:12px}
+.stats-tbl tr:last-child td{border-bottom:none}
+.stats-tbl td:first-child{font-weight:600;color:#BF360C}
+.tbl-toolbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;gap:10px;flex-wrap:wrap}
+.tbl-toolbar input{padding:7px 14px;border:2px solid #FFD54F;border-radius:20px;font-size:13px;width:260px;outline:none;font-family:'Quicksand',sans-serif;background:rgba(255,255,255,.9)}
+.tbl-toolbar input:focus{border-color:#FF8F00}
+.tbl-wrap{overflow-x:auto;border-radius:14px;border:2px solid #FFD54F;background:rgba(255,255,255,.92)}
+table.data{width:100%;border-collapse:collapse;font-size:12px}
+table.data thead th{background:#FFF3E0;padding:9px 12px;text-align:left;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#BF360C;border-bottom:2px solid #FFD54F;cursor:pointer;white-space:nowrap}
+table.data thead th:hover{background:#FFE082}
+table.data tbody tr:hover{background:#FFF8E1}
+table.data tbody tr:nth-child(even){background:#FFFDE7}
+table.data tbody td{padding:7px 12px;border-bottom:1px solid #FFF3E0;color:#4E342E;max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.badge{display:inline-block;padding:2px 8px;border-radius:10px;font-size:10px;font-weight:700}
+.b-ave{background:#E8F5E9;color:#2E7D32}.b-mam{background:#E3F2FD;color:#1565C0}.b-anf{background:#FFF3E0;color:#E65100}.b-rep{background:#F3E5F5;color:#7B1FA2}
+.pagination{display:flex;align-items:center;justify-content:space-between;margin-top:10px;font-size:12px;color:#795548}
+.pagination button{padding:5px 14px;border:2px solid #FFD54F;background:rgba(255,255,255,.9);border-radius:15px;cursor:pointer;font-size:12px;font-family:'Quicksand',sans-serif;font-weight:600;color:#E65100}
+.pagination button:hover:not(:disabled){background:#FFF3E0}
+.pagination button:disabled{opacity:.3;cursor:default}
+@media(max-width:700px){
+header{flex-wrap:wrap;height:auto;padding:10px 12px;gap:6px}
+.kpis{grid-template-columns:1fr 1fr}.kpi-val{font-size:22px}
+.grid-2,.grid-3-1{grid-template-columns:1fr}
+.tbl-toolbar{flex-direction:column;align-items:stretch}.tbl-toolbar input{width:100%}
+}
+</style>
+</head>
+<body>
+<div class="flower">🌸</div><div class="flower">🌼</div><div class="flower">🌺</div>
+<div class="flower">🌻</div><div class="flower">🌷</div><div class="flower">🌸</div>
+<header>
+<div class="brand">TRANSECTOS<span>.uaa</span></div>
+<nav>
+<button class="active" onclick="showTab('dash',this)">Dashboard</button>
+<button onclick="showTab('stats',this)">Estadisticas</button>
+<button onclick="showTab('tabla',this)">Datos</button>
+</nav>
+<div style="font-size:11px;color:#BF360C;font-weight:600">UAA Campus Central · 2026</div>
+</header>
+<div class="container">
+
+<!-- DASHBOARD -->
+<div id="dash" class="page active">
+<div class="kpis">
+<div class="kpi"><div class="kpi-val">823</div><div class="kpi-lbl">Avistamientos totales</div></div>
+<div class="kpi"><div class="kpi-val">25</div><div class="kpi-lbl">Especies identificadas</div></div>
+<div class="kpi"><div class="kpi-val">31</div><div class="kpi-lbl">Transectos recorridos</div></div>
+<div class="kpi"><div class="kpi-val">8</div><div class="kpi-lbl">Fechas de muestreo</div></div>
+</div>
+<div class="grid-2">
+<div class="cc">
+<div class="ct">Avistamientos por Grupo Animal</div>
+<div style="position:relative;height:200px"><canvas id="c1"></canvas></div>
+<div class="legend">
+<span><span class="dot" style="background:#2E7D32"></span>Ave (773)</span>
+<span><span class="dot" style="background:#1565C0"></span>Mamifero (49)</span>
+<span><span class="dot" style="background:#E65100"></span>Anfibio (1)</span>
+</div>
+</div>
+<div class="cc">
+<div class="ct">Top 8 Especies por Avistamientos</div>
+<div style="position:relative;height:200px"><canvas id="c2"></canvas></div>
+</div>
+</div>
+<div class="cc full">
+<div class="ct">Avistamientos por Transecto</div>
+<div style="position:relative;height:180px"><canvas id="c3"></canvas></div>
+</div>
+<div class="grid-2">
+<div class="cc">
+<div class="ct">Registros por Fecha de Muestreo</div>
+<div style="position:relative;height:190px"><canvas id="c4"></canvas></div>
+</div>
+<div class="cc">
+<div class="ct">Avistamientos por Fecha</div>
+<div style="position:relative;height:190px"><canvas id="c5"></canvas></div>
+</div>
+</div>
+<div class="grid-3-1">
+<div class="cc">
+<div class="ct">Distribucion de Avistamientos por Registro</div>
+<div style="position:relative;height:170px"><canvas id="c6"></canvas></div>
+</div>
+<div class="cc">
+<div class="ct">Especies por Grupo</div>
+<div style="position:relative;height:170px"><canvas id="c7"></canvas></div>
+<div class="legend" style="flex-direction:column;gap:3px;margin-top:8px">
+<span><span class="dot" style="background:#2E7D32"></span>Ave: 21 spp</span>
+<span><span class="dot" style="background:#1565C0"></span>Mamifero: 3 spp</span>
+<span><span class="dot" style="background:#E65100"></span>Anfibio: 1 sp</span>
+</div>
+</div>
+</div>
+</div>
+
+<!-- ESTADISTICAS -->
+<div id="stats" class="page">
+<div class="section-label">Codificacion Numerica (Codebook)</div>
+<div class="codebook"><table>
+<thead><tr><th>Variable</th><th>Descripcion</th><th>Equivalencias</th></tr></thead>
+<tbody>
+<tr><td>Grupo Animal</td><td>Clasificacion taxonomica del grupo</td><td>
+<span class="code-val"><b>1</b><span>Anfibio</span></span>
+<span class="code-val"><b>2</b><span>Ave</span></span>
+<span class="code-val"><b>3</b><span>Mamifero</span></span>
+</td></tr>
+<tr><td>Especie</td><td>Nombre cientifico (25 especies)</td><td>
+<span class="code-val"><b>1</b><span>Anas diazi</span></span>
+<span class="code-val"><b>2</b><span>Anas platyrhynchos</span></span>
+<span class="code-val"><b>3</b><span>Aspidoscelis gularis</span></span>
+<span class="code-val"><b>...</b><span>Ver Excel</span></span>
+<span class="code-val"><b>25</b><span>Zenaida asiatica</span></span>
+</td></tr>
+<tr><td>Nombre comun</td><td>Nombre comun de la especie (26 nombres)</td><td>
+<span class="code-val"><b>1</b><span>Ardilla gris</span></span>
+<span class="code-val"><b>2</b><span>Cardenalito</span></span>
+<span class="code-val"><b>...</b><span>Ver Excel</span></span>
+<span class="code-val"><b>26</b><span>Zanate Mayor</span></span>
+</td></tr>
+<tr><td>No Transecto</td><td>Identificador del transecto (1-31)</td><td>
+<span class="code-val"><b>1-31</b><span>Entero unico</span></span>
+</td></tr>
+<tr><td>Avistamientos</td><td>Numero de individuos observados</td><td>
+<span class="code-val"><b>1-40</b><span>Conteo directo</span></span>
+</td></tr>
+</tbody>
+</table></div>
+
+<div class="section-label">Resumen Estadistico</div>
+<div style="overflow-x:auto;border-radius:14px;border:2px solid #FFD54F;margin-bottom:14px">
+<table class="stats-tbl">
+<thead><tr><th>Variable</th><th>N</th><th>Unicos</th><th>Moda</th><th>Media</th><th>Mediana</th><th>Min</th><th>Max</th><th>Desv. Est.</th></tr></thead>
+<tbody>
+<tr><td>Grupo Animal</td><td>228</td><td>3</td><td>Ave</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td></tr>
+<tr><td>Especie</td><td>225</td><td>25</td><td>Z. asiatica</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td></tr>
+<tr><td>No de Transecto</td><td>228</td><td>31</td><td>17</td><td>14.2</td><td>14</td><td>1</td><td>31</td><td>8.7</td></tr>
+<tr><td>Avistamientos</td><td>228</td><td>14</td><td>1</td><td>3.6</td><td>2.0</td><td>1</td><td>40</td><td>4.2</td></tr>
+</tbody>
+</table>
+</div>
+
+<div class="section-label">Hallazgos Clave</div>
+<div class="cc full">
+<ul style="line-height:1.8;color:#4E342E;padding-left:20px;font-size:13px">
+<li><strong>Dominancia de aves:</strong> El 93.9% de los avistamientos corresponden a aves (773/823).</li>
+<li><strong>Especie mas abundante:</strong> Paloma Alas Blancas (<em>Zenaida asiatica</em>) con 232 avistamientos (28.2%).</li>
+<li><strong>Mamiferos:</strong> Solo 3 especies — Gato domestico (40), Ardilla gris (5) y Mapache boreal (3).</li>
+<li><strong>Transecto 17:</strong> Concentra el mayor numero de avistamientos (129), muy por encima del promedio (26.5).</li>
+<li><strong>Gato domestico:</strong> 26 registros en distintos transectos, indicando presencia dispersa en el campus.</li>
+<li><strong>Diversidad:</strong> 25 especies en 31 transectos, con 8 jornadas de muestreo entre marzo y noviembre 2026.</li>
+<li><strong>Datos faltantes:</strong> 3 registros sin especie, 2 sin nombre comun. Columna Fotografias vacia.</li>
+</ul>
+</div>
+
+<div class="section-label">Distribucion de Frecuencias</div>
+<div class="grid-2">
+<div class="cc"><div class="ct">Frecuencia por Grupo Animal (registros)</div>
+<div style="position:relative;height:160px"><canvas id="s1"></canvas></div></div>
+<div class="cc"><div class="ct">Top 5 Especies (total avistamientos)</div>
+<div style="position:relative;height:160px"><canvas id="s2"></canvas></div></div>
+</div>
+</div>
+
+<!-- TABLA -->
+<div id="tabla" class="page">
+<div class="tbl-toolbar">
+<input type="text" id="srch" placeholder="Buscar especie, grupo, transecto..." oninput="filterTbl()">
+<span style="font-size:12px;color:#795548;font-weight:600" id="tbl-info">228 registros</span>
+</div>
+<div class="tbl-wrap">
+<table class="data">
+<thead><tr>
+<th onclick="sortBy(0)">#</th>
+<th onclick="sortBy(1)">Fecha</th>
+<th onclick="sortBy(2)">Transecto</th>
+<th onclick="sortBy(3)">Grupo</th>
+<th onclick="sortBy(4)">Especie</th>
+<th onclick="sortBy(5)">Nombre comun</th>
+<th onclick="sortBy(6)">Avistamientos</th>
+</tr></thead>
+<tbody id="tbody"></tbody>
+</table>
+</div>
+<div class="pagination">
+<span id="pg-info"></span>
+<div style="display:flex;gap:6px">
+<button onclick="pgPrev()" id="pg-prev">Anterior</button>
+<button onclick="pgNext()" id="pg-next">Siguiente</button>
+</div>
+</div>
+</div>
+</div>
+
+<script>
+function showTab(id,btn){document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));document.getElementById(id).classList.add('active');document.querySelectorAll('nav button').forEach(b=>b.classList.remove('active'));btn.classList.add('active')}
+
+const P='#FF8F00',G='#2E7D32',B='#1565C0',O='#E65100',Y='#FDD835',R='#C62828',V='#7B1FA2';
+const cOpts={responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}}};
+
+// C1: Pie grupo animal
+new Chart('c1',{type:'doughnut',data:{labels:['Ave','Mamifero','Anfibio'],datasets:[{data:[773,49,1],backgroundColor:[G,B,O],borderWidth:2,borderColor:'#fff'}]},options:{...cOpts,cutout:'55%'}});
+
+// C2: Top species bar
+new Chart('c2',{type:'bar',data:{labels:['Paloma AB','Pinzon Mx','Zanate','Pato Mx','Cardenalito','Chipe RA','Gato dom.','Monjita'],datasets:[{data:[232,182,145,47,47,45,40,14],backgroundColor:[G,'#43A047','#66BB6A','#81C784',P,'#FFB300',B,V],borderRadius:6}]},options:{...cOpts,indexAxis:'y',scales:{x:{grid:{display:false}},y:{grid:{display:false}}}}});
+
+// C3: Sightings per transect
+new Chart('c3',{type:'bar',data:{labels:Array.from({length:31},(_,i)=>'T'+(i+1)),datasets:[{data:[32,51,21,47,26,25,31,16,40,38,19,38,17,15,37,17,129,19,10,14,5,1,1,4,13,14,13,69,29,12,20],backgroundColor:Array.from({length:31},(_,i)=>i===16?O:i===27?R:P),borderRadius:4}]},options:{...cOpts,scales:{x:{grid:{display:false},ticks:{font:{size:9}}},y:{grid:{color:'#FFF3E0'}}}}});
+
+// C4: Records per date
+new Chart('c4',{type:'bar',data:{labels:['14/Mar','19/Mar','20/Mar','23/Mar','31/Mar','21/Abr','3/Oct','4/Nov'],datasets:[{data:[43,3,43,1,23,60,18,37],backgroundColor:P,borderRadius:6}]},options:{...cOpts,scales:{x:{grid:{display:false}},y:{grid:{color:'#FFF3E0'}}}}});
+
+// C5: Sightings per date
+new Chart('c5',{type:'line',data:{labels:['14/Mar','19/Mar','20/Mar','23/Mar','31/Mar','21/Abr','3/Oct','4/Nov'],datasets:[{data:[125,5,153,1,133,188,61,157],borderColor:O,backgroundColor:'rgba(230,81,0,.1)',fill:true,tension:.3,pointRadius:5,pointBackgroundColor:O}]},options:{...cOpts,scales:{x:{grid:{display:false}},y:{grid:{color:'#FFF3E0'}}}}});
+
+// C6: Distribution histogram
+new Chart('c6',{type:'bar',data:{labels:['1','2','3','4','5','6-10','11-20','21-40'],datasets:[{data:[79,36,31,14,18,33,12,5],backgroundColor:G,borderRadius:5}]},options:{...cOpts,scales:{x:{title:{display:true,text:'Avistamientos por registro',font:{size:10}},grid:{display:false}},y:{title:{display:true,text:'Frecuencia',font:{size:10}},grid:{color:'#FFF3E0'}}}}});
+
+// C7: Species per group pie
+new Chart('c7',{type:'doughnut',data:{labels:['Ave (21)','Mamifero (3)','Anfibio (1)'],datasets:[{data:[21,3,1],backgroundColor:[G,B,O],borderWidth:2,borderColor:'#fff'}]},options:{...cOpts,cutout:'50%'}});
+
+// S1: Frequency by group
+new Chart('s1',{type:'bar',data:{labels:['Ave','Mamifero','Anfibio'],datasets:[{data:[194,33,1],backgroundColor:[G,B,O],borderRadius:6}]},options:{...cOpts,scales:{x:{grid:{display:false}},y:{grid:{color:'#FFF3E0'}}}}});
+
+// S2: Top 5 species
+new Chart('s2',{type:'bar',data:{labels:['Paloma AB','Pinzon Mx','Zanate Mayor','Pato Mx','Cardenalito'],datasets:[{data:[232,182,145,47,47],backgroundColor:[G,'#43A047','#66BB6A',P,'#FFB300'],borderRadius:6}]},options:{...cOpts,indexAxis:'y',scales:{x:{grid:{display:false}},y:{grid:{display:false}}}}});
+
+// === TABLE ===
+const DATA=[
+["03/10/2026",1,"Ave","Quiscalus mexicanus","Zanate Mayor",8],
+["03/10/2026",1,"Ave","Zenaida asiatica","Paloma Alas Blancas",3],
+["03/10/2026",2,"Ave","Quiscalus mexicanus","Zanate Mayor",6],
+["03/10/2026",2,"Ave","Zenaida asiatica","Paloma Alas Blancas",6],
+["03/10/2026",2,"Ave","Pyrocephalus rubinus","Cardenalito",1],
+["03/10/2026",3,"Ave","Quiscalus mexicanus","Zanate Mayor",3],
+["03/10/2026",3,"Ave","Zenaida asiatica","Paloma Alas Blancas",6],
+["03/10/2026",3,"Ave","Pyrocephalus rubinus","Cardenalito",3],
+["03/10/2026",4,"Ave","Setophaga coronata","Chipe Rabadilla Amarilla",1],
+["03/10/2026",4,"Ave","Pyrocephalus rubinus","Cardenalito",1],
+["03/10/2026",4,"Ave","Quiscalus mexicanus","Zanate Mayor",8],
+["03/10/2026",4,"Ave","Zenaida asiatica","Paloma Alas Blancas",3],
+["03/10/2026",5,"Ave","Haemorhous mexicanus","Pinzon Mexicano",4],
+["03/10/2026",5,"Ave","Zenaida asiatica","Paloma Alas Blancas",3],
+["03/10/2026",6,"Ave","Haemorhous mexicanus","Pinzon Mexicano",3],
+["03/10/2026",7,"Ave","Haemorhous mexicanus","Pinzon Mexicano",5],
+["03/10/2026",7,"Ave","Quiscalus mexicanus","Zanate Mayor",1],
+["03/10/2026",8,"Ave","Haemorhous mexicanus","Pinzon Mexicano",5],
+["04/11/2026",9,"Ave","Quiscalus mexicanus","Zanate Mayor",3],
+["04/11/2026",9,"Ave","Zenaida asiatica","Paloma Alas Blancas",5],
+["04/11/2026",9,"Ave","Haemorhous mexicanus","Pinzon Mexicano",4],
+["04/11/2026",9,"Mamifero","Felis catus","Gato domestico",2],
+["04/11/2026",10,"Ave","Quiscalus mexicanus","Zanate Mayor",5],
+["04/11/2026",10,"Ave","Haemorhous mexicanus","Pinzon Mexicano",5],
+["04/11/2026",10,"Ave","Pyrocephalus rubinus","Cardenalito",1],
+["04/11/2026",10,"Mamifero","Felis catus","Gato domestico",2],
+["04/11/2026",11,"Ave","Setophaga coronata","Chipe Rabadilla Amarilla",2],
+["04/11/2026",11,"Mamifero","Felis catus","Gato domestico",1],
+["04/11/2026",12,"Ave","Quiscalus mexicanus","Zanate Mayor",5],
+["04/11/2026",12,"Ave","Zenaida asiatica","Paloma Alas Blancas",6],
+["04/11/2026",12,"Ave","Setophaga coronata","Chipe Rabadilla Amarilla",3],
+["04/11/2026",12,"Mamifero","Felis catus","Gato domestico",1],
+["04/11/2026",13,"Ave","Zenaida asiatica","Paloma Alas Blancas",6],
+["04/11/2026",13,"Ave","Haemorhous mexicanus","Pinzon Mexicano",2],
+["04/11/2026",13,"Mamifero","Felis catus","Gato domestico",2],
+["04/11/2026",14,"Ave","Zenaida asiatica","Paloma Alas Blancas",6],
+["04/11/2026",14,"Ave","Haemorhous mexicanus","Pinzon Mexicano",3],
+["04/11/2026",15,"Ave","Quiscalus mexicanus","Zanate Mayor",6],
+["04/11/2026",15,"Ave","Zenaida asiatica","Paloma Alas Blancas",12],
+["04/11/2026",15,"Ave","Setophaga coronata","Chipe Rabadilla Amarilla",1],
+["04/11/2026",15,"Mamifero","Felis catus","Gato domestico",2],
+["04/11/2026",16,"Ave","Zenaida asiatica","Paloma Alas Blancas",7],
+["04/11/2026",16,"Mamifero","Felis catus","Gato domestico",2],
+["04/11/2026",17,"Ave","Anas diazi","Pato mexicano",40],
+["04/11/2026",17,"Ave","Nannopterum brasilianum","Cormoran Neotropical",2],
+["04/11/2026",17,"Ave","Zenaida asiatica","Paloma Alas Blancas",6],
+["04/11/2026",17,"Ave","Egretta thula","Garza Dedos Dorados",2],
+["04/11/2026",17,"Ave","Haemorhous mexicanus","Pinzon Mexicano",2],
+["04/11/2026",17,"Ave","Setophaga coronata","Chipe Rabadilla Amarilla",5],
+["04/11/2026",17,"Mamifero","Felis catus","Gato domestico",1],
+["04/11/2026",18,"Ave","Quiscalus mexicanus","Zanate Mayor",5],
+["04/11/2026",18,"Ave","Haemorhous mexicanus","Pinzon Mexicano",2],
+["04/11/2026",18,"Mamifero","Felis catus","Gato domestico",1],
+["04/11/2026",19,"Ave","Haemorhous mexicanus","Pinzon Mexicano",5],
+["04/11/2026",19,"Mamifero","Felis catus","Gato domestico",1],
+["04/11/2026",20,"Ave","Quiscalus mexicanus","Zanate Mayor",5],
+["04/11/2026",20,"Mamifero","Felis catus","Gato domestico",2],
+["14/03/2026",1,"Ave","Zenaida asiatica","Paloma Alas Blancas",4],
+["14/03/2026",1,"Ave","Quiscalus mexicanus","Zanate Mayor",5],
+["14/03/2026",1,"Ave","Haemorhous mexicanus","Pinzon Mexicano",3],
+["14/03/2026",2,"Ave","Zenaida asiatica","Paloma Alas Blancas",5],
+["14/03/2026",2,"Ave","Quiscalus mexicanus","Zanate Mayor",3],
+["14/03/2026",2,"Ave","Pyrocephalus rubinus","Cardenalito",1],
+["14/03/2026",2,"Ave","Setophaga coronata","Chipe Rabadilla Amarilla",2],
+["14/03/2026",3,"Ave","Haemorhous mexicanus","Pinzon Mexicano",3],
+["14/03/2026",3,"Ave","Pyrocephalus rubinus","Cardenalito",1],
+["14/03/2026",4,"Ave","Zenaida asiatica","Paloma Alas Blancas",8],
+["14/03/2026",4,"Ave","Pyrocephalus rubinus","Cardenalito",2],
+["14/03/2026",4,"Ave","Setophaga coronata","Chipe Rabadilla Amarilla",1],
+["14/03/2026",4,"Ave","Haemorhous mexicanus","Pinzon Mexicano",2],
+["14/03/2026",5,"Ave","Zenaida asiatica","Paloma Alas Blancas",5],
+["14/03/2026",5,"Ave","Haemorhous mexicanus","Pinzon Mexicano",1],
+["14/03/2026",5,"Ave","Pyrocephalus rubinus","Cardenalito",1],
+["14/03/2026",6,"Ave","Zenaida asiatica","Paloma Alas Blancas",3],
+["14/03/2026",6,"Ave","Quiscalus mexicanus","Zanate Mayor",4],
+["14/03/2026",6,"Mamifero","Felis catus","Gato domestico",2],
+["14/03/2026",7,"Ave","Setophaga coronata","Chipe Rabadilla Amarilla",3],
+["14/03/2026",7,"Ave","Haemorhous mexicanus","Pinzon Mexicano",4],
+["14/03/2026",7,"Ave","Pyrocephalus rubinus","Cardenalito",2],
+["14/03/2026",7,"Mamifero","Felis catus","Gato domestico",1],
+["14/03/2026",8,"Ave","Haemorhous mexicanus","Pinzon Mexicano",2],
+["14/03/2026",8,"Ave","Pyrocephalus rubinus","Cardenalito",1],
+["14/03/2026",8,"Mamifero","Felis catus","Gato domestico",1],
+["14/03/2026",9,"Ave","Zenaida asiatica","Paloma Alas Blancas",8],
+["14/03/2026",9,"Ave","Quiscalus mexicanus","Zanate Mayor",5],
+["14/03/2026",9,"Ave","Pyrocephalus rubinus","Cardenalito",1],
+["14/03/2026",10,"Ave","Quiscalus mexicanus","Zanate Mayor",6],
+["14/03/2026",10,"Ave","Haemorhous mexicanus","Pinzon Mexicano",4],
+["14/03/2026",10,"Ave","Pyrocephalus rubinus","Cardenalito",1],
+["14/03/2026",10,"Mamifero","Felis catus","Gato domestico",1],
+["14/03/2026",11,"Ave","Haemorhous mexicanus","Pinzon Mexicano",5],
+["14/03/2026",11,"Ave","Setophaga coronata","Chipe Rabadilla Amarilla",4],
+["14/03/2026",12,"Ave","Zenaida asiatica","Paloma Alas Blancas",10],
+["14/03/2026",12,"Ave","Haemorhous mexicanus","Pinzon Mexicano",3],
+["14/03/2026",13,"Ave","Haemorhous mexicanus","Pinzon Mexicano",4],
+["14/03/2026",14,"Ave","Haemorhous mexicanus","Pinzon Mexicano",6],
+["19/03/2026",17,"Ave","Anas diazi","Pato mexicano",2],
+["19/03/2026",17,"Ave","Nannopterum brasilianum","Cormoran Neotropical",2],
+["19/03/2026",17,"Mamifero","Sciurus griseus","Ardilla gris",1],
+["20/03/2026",4,"Ave","Quiscalus mexicanus","Zanate Mayor",5],
+["20/03/2026",4,"Mamifero","Felis catus","Gato domestico",2],
+["20/03/2026",9,"Ave","Quiscalus mexicanus","Zanate Mayor",2],
+["20/03/2026",9,"Ave","Pyrocephalus rubinus","Cardenalito",2],
+["20/03/2026",10,"Ave","Quiscalus mexicanus","Zanate Mayor",3],
+["20/03/2026",10,"Ave","Pyrocephalus rubinus","Cardenalito",2],
+["20/03/2026",10,"Mamifero","Felis catus","Gato domestico",1],
+["20/03/2026",11,"Ave","Pyrocephalus rubinus","Cardenalito",2],
+["20/03/2026",11,"Ave","Setophaga coronata","Chipe Rabadilla Amarilla",2],
+["20/03/2026",12,"Ave","Haemorhous mexicanus","Pinzon Mexicano",2],
+["20/03/2026",12,"Ave","Zenaida asiatica","Paloma Alas Blancas",5],
+["20/03/2026",15,"Ave","Zenaida asiatica","Paloma Alas Blancas",6],
+["20/03/2026",15,"Ave","Setophaga coronata","Chipe Rabadilla Amarilla",2],
+["20/03/2026",15,"Mamifero","Felis catus","Gato domestico",1],
+["20/03/2026",16,"Ave","Haemorhous mexicanus","Pinzon Mexicano",4],
+["20/03/2026",16,"Ave","Zenaida asiatica","Paloma Alas Blancas",4],
+["20/03/2026",17,"Ave","Anas diazi","Pato mexicano",5],
+["20/03/2026",17,"Ave","Egretta thula","Garza Dedos Dorados",1],
+["20/03/2026",17,"Ave","Haemorhous mexicanus","Pinzon Mexicano",5],
+["20/03/2026",17,"Ave","Melanerpes aurifrons","Carpintero Cheje",1],
+["20/03/2026",17,"Ave","Pyrocephalus rubinus","Cardenalito",2],
+["20/03/2026",17,"Ave","Quiscalus mexicanus","Zanate Mayor",15],
+["20/03/2026",17,"Ave","Zenaida asiatica","Paloma Alas Blancas",20],
+["20/03/2026",17,"Mamifero","Sciurus griseus","Ardilla gris",1],
+["20/03/2026",18,"Ave","Haemorhous mexicanus","Pinzon Mexicano",3],
+["20/03/2026",18,"Ave","Pyrocephalus rubinus","Cardenalito",2],
+["20/03/2026",18,"Ave","Quiscalus mexicanus","Zanate Mayor",2],
+["20/03/2026",18,"Mamifero","Felis catus","Gato domestico",1],
+["20/03/2026",19,"Ave","Haemorhous mexicanus","Pinzon Mexicano",4],
+["20/03/2026",20,"Ave","Haemorhous mexicanus","Pinzon Mexicano",5],
+["20/03/2026",20,"Ave","Quiscalus mexicanus","Zanate Mayor",2],
+["20/03/2026",21,"Ave","Cynanthus latirostris","Colibri Pico Ancho Norteno",2],
+["20/03/2026",21,"Ave","Haemorhous mexicanus","Pinzon Mexicano",3],
+["20/03/2026",22,"Mamifero","Felis catus","Gato domestico",1],
+["20/03/2026",23,"Ave","Quiscalus mexicanus","Zanate Mayor",1],
+["20/03/2026",24,"Ave","Haemorhous mexicanus","Pinzon Mexicano",2],
+["20/03/2026",24,"Mamifero","Felis catus","Gato domestico",2],
+["20/03/2026",25,"Ave","Quiscalus mexicanus","Zanate Mayor",4],
+["20/03/2026",25,"Ave","Cynanthus latirostris","Colibri Pico Ancho Norteno",1],
+["20/03/2026",25,"Ave","Setophaga coronata","Chipe Rabadilla Amarilla",2],
+["20/03/2026",25,"Mamifero","Felis catus","Gato domestico",2],
+["20/03/2026",25,"Ave","Haemorhous mexicanus","Pinzon Mexicano",2],
+["20/03/2026",25,"Mamifero","Sciurus griseus","Ardilla gris",2],
+["20/03/2026",26,"Ave","Haemorhous mexicanus","Pinzon Mexicano",5],
+["20/03/2026",26,"Ave","Zenaida asiatica","Paloma Alas Blancas",5],
+["20/03/2026",26,"Mamifero","Felis catus","Gato domestico",2],
+["20/03/2026",26,"Ave","Pyrocephalus rubinus","Cardenalito",2],
+["20/03/2026",27,"Ave","Haemorhous mexicanus","Pinzon Mexicano",5],
+["20/03/2026",27,"Ave","Melanerpes aurifrons","Carpintero Cheje",3],
+["20/03/2026",27,"Mamifero","Felis catus","Gato domestico",1],
+["20/03/2026",27,"Ave","Pyrocephalus rubinus","Cardenalito",1],
+["20/03/2026",27,"Ave","Cynanthus latirostris","Colibri Pico Ancho Norteno",2],
+["20/03/2026",27,"Mamifero","Procyon lotor","Mapache boreal",1],
+["23/03/2026",17,"Mamifero","Sciurus griseus","Ardilla gris",1],
+["31/03/2026",28,"Ave","Quiscalus mexicanus","Zanate Mayor",15],
+["31/03/2026",28,"Ave","Zenaida asiatica","Paloma Alas Blancas",20],
+["31/03/2026",28,"Ave","Setophaga coronata","Chipe Rabadilla Amarilla",6],
+["31/03/2026",28,"Ave","Haemorhous mexicanus","Pinzon Mexicano",5],
+["31/03/2026",28,"Ave","Melanerpes aurifrons","Carpintero Cheje",1],
+["31/03/2026",28,"Mamifero","Procyon lotor","Mapache boreal",2],
+["31/03/2026",28,"Ave","Neoxolmis rufiventris","Monjita chocolate",4],
+["31/03/2026",28,"Ave","Myiarchus tyrannulus","Papamoscas Griton",3],
+["31/03/2026",28,"Mamifero","Felis catus","Gato domestico",1],
+["31/03/2026",28,"Ave","Cynanthus latirostris","Colibri Pico Ancho Norteno",2],
+["31/03/2026",28,"Ave","Setophaga coronata","Chipe Rabadilla Amarilla",2],
+["31/03/2026",28,"Mamifero","Sciurus griseus","Ardilla gris",1],
+["31/03/2026",28,"Ave","Haemorhous mexicanus","Pinzon Mexicano",5],
+["31/03/2026",28,"Ave","Pyrocephalus rubinus","Cardenalito",2],
+["31/03/2026",29,"Ave","Quiscalus mexicanus","Zanate Mayor",5],
+["31/03/2026",29,"Ave","Zenaida asiatica","Paloma Alas Blancas",12],
+["31/03/2026",29,"Ave","Setophaga coronata","Chipe Rabadilla Amarilla",5],
+["31/03/2026",29,"Ave","Pyrocephalus rubinus","Cardenalito",1],
+["31/03/2026",29,"Mamifero","Felis catus","Gato domestico",3],
+["31/03/2026",29,"Ave","Haemorhous mexicanus","Pinzon Mexicano",3],
+["31/03/2026",30,"Ave","Quiscalus mexicanus","Zanate Mayor",5],
+["31/03/2026",30,"Ave","Haemorhous mexicanus","Pinzon Mexicano",5],
+["31/03/2026",30,"Mamifero","Felis catus","Gato domestico",2],
+["31/03/2026",31,"Ave","Quiscalus mexicanus","Zanate Mayor",5],
+["31/03/2026",31,"Ave","Neoxolmis rufiventris","Monjita chocolate",5],
+["31/03/2026",31,"Ave","Haemorhous mexicanus","Pinzon Mexicano",5],
+["31/03/2026",31,"Ave","Neoxolmis rufiventris","Monjita chocolate",5],
+["21/4/2026",1,"Ave","Quiscalus mexicanus","Zanate Mayor",5],
+["21/4/2026",1,"Ave","Haemorhous mexicanus","Pinzon Mexicano",3],
+["21/4/2026",1,"Ave","Pyrocephalus rubinus","Cardenalito",1],
+["21/4/2026",1,"Mamifero","Felis catus","Gato domestico",3],
+["21/4/2026",2,"Ave","Zenaida asiatica","Paloma Alas Blancas",10],
+["21/4/2026",2,"Ave","Haemorhous mexicanus","Pinzon Mexicano",3],
+["21/4/2026",2,"Ave","Pyrocephalus rubinus","Cardenalito",1],
+["21/4/2026",2,"Mamifero","Felis catus","Gato domestico",1],
+["21/4/2026",3,"Ave","Pyrocephalus rubinus","Cardenalito",1],
+["21/4/2026",3,"Ave","Haemorhous mexicanus","Pinzon Mexicano",2],
+["21/4/2026",3,"Ave","Zenaida asiatica","Paloma Alas Blancas",2],
+["21/4/2026",4,"Ave","Quiscalus mexicanus","Zanate Mayor",3],
+["21/4/2026",5,"Ave","Quiscalus mexicanus","Zanate Mayor",5],
+["21/4/2026",5,"Ave","Haemorhous mexicanus","Pinzon Mexicano",3],
+["21/4/2026",5,"Mamifero","Felis catus","Gato domestico",2],
+["21/4/2026",6,"Ave","Haemorhous mexicanus","Pinzon Mexicano",3],
+["21/4/2026",6,"Ave","Quiscalus mexicanus","Zanate Mayor",4],
+["21/4/2026",6,"Ave","Pyrocephalus rubinus","Cardenalito",2],
+["21/4/2026",7,"Ave","Quiscalus mexicanus","Zanate Mayor",3],
+["21/4/2026",7,"Ave","Zenaida asiatica","Paloma Alas Blancas",5],
+["21/4/2026",7,"Ave","Haemorhous mexicanus","Pinzon Mexicano",3],
+["21/4/2026",8,"Ave","Zenaida asiatica","Paloma Alas Blancas",5],
+["21/4/2026",8,"Ave","Quiscalus mexicanus","Zanate Mayor",2],
+["21/4/2026",9,"Ave","Quiscalus mexicanus","Zanate Mayor",5],
+["21/4/2026",10,"Ave","Zenaida asiatica","Paloma Alas Blancas",5],
+["21/4/2026",10,"Ave","Quiscalus mexicanus","Zanate Mayor",5],
+["21/4/2026",11,"Ave","Zenaida asiatica","Paloma Alas Blancas",4],
+["21/4/2026",12,"Ave","Haemorhous mexicanus","Pinzon Mexicano",3],
+["21/4/2026",12,"Ave","Zenaida asiatica","Paloma Alas Blancas",4],
+["21/4/2026",13,"Ave","Haemorhous mexicanus","Pinzon Mexicano",5],
+["21/4/2026",14,"Ave","Zenaida asiatica","Paloma Alas Blancas",5],
+["21/4/2026",14,"Ave","Haemorhous mexicanus","Pinzon Mexicano",4],
+["21/4/2026",15,"Ave","Zenaida asiatica","Paloma Alas Blancas",7],
+["21/4/2026",16,"Ave","Zenaida asiatica","Paloma Alas Blancas",4],
+["21/4/2026",17,"Ave","Zenaida asiatica","Paloma Alas Blancas",4],
+["21/4/2026",17,"Ave","Setophaga coronata","Chipe Rabadilla Amarilla",4],
+["21/4/2026",17,"Ave","Haemorhous mexicanus","Pinzon Mexicano",4],
+["21/4/2026",17,"Ave","Quiscalus mexicanus","Zanate Mayor",5],
+["21/4/2026",17,"Ave","Pyrocephalus rubinus","Cardenalito",2],
+["21/4/2026",17,"Ave","Myiarchus tyrannulus","Papamoscas Griton",2],
+["21/4/2026",18,"Ave","Haemorhous mexicanus","Pinzon Mexicano",2],
+["21/4/2026",18,"Ave","Quiscalus mexicanus","Zanate Mayor",3],
+["21/4/2026",18,"Mamifero","Felis catus","Gato domestico",1],
+["21/4/2026",19,"Mamifero","Felis catus","Gato domestico",1],
+["21/4/2026",20,"Ave","Quiscalus mexicanus","Zanate Mayor",2],
+["21/4/2026",20,"Ave","Haemorhous mexicanus","Pinzon Mexicano",3],
+["21/4/2026",20,"Mamifero","Felis catus","Gato domestico",2],
+];
+
+// Additional rows from the dataset with special species
+const DATA2=[
+["14/03/2026",5,"Ave","Spizella passerina","Gorrion Cejas Blancas",5],
+["14/03/2026",6,"Ave","Spizella passerina","Gorrion Cejas Blancas",7],
+["20/03/2026",17,"Ave","Setophaga coronata","Chipe Amarillo",11],
+["04/11/2026",17,"Ave","Mimus polyglottos","Centzontle Norteno",1],
+["04/11/2026",17,"Ave","Cairina moschata","Pato real",1],
+["31/03/2026",28,"Ave","Columbina picui","Torcacita comun",6],
+["31/03/2026",28,"Ave","Euphagus cyanocephalus","Tordo Ojos Amarillos",2],
+["31/03/2026",29,"Ave","Passer domesticus","Gorrion comun",1],
+["21/4/2026",17,"Ave","Anas platyrhynchos domesticus","Pato domestico",1],
+["20/03/2026",14,"Anfibio","Aspidoscelis gularis","Lagartija llanera",1],
+["04/11/2026",17,"Ave","Mimus polyglottos","Centzontle Norteno",1],
+["21/4/2026",4,"Ave","Sayornis saya","Papamoscas llanero",2],
+["21/4/2026",17,"Ave","Tyrannus melancholicus","Tirano tropical",1],
+];
+
+const ALL=DATA.concat(DATA2);
+let filtered=ALL.slice(),sortCol=-1,sortAsc=true,pg=0,perPg=25;
+
+function renderTbl(){
+const s=pg*perPg,e=Math.min(s+perPg,filtered.length);
+const tb=document.getElementById('tbody');
+let h='';
+for(let i=s;i<e;i++){const r=filtered[i];const gc=r[3]==='Mamifero'?'b-mam':r[3]==='Anfibio'?'b-anf':'b-ave';
+h+=`<tr><td style="font-family:monospace;color:#BF360C;font-size:11px">${i+1}</td><td>${r[0]}</td><td style="text-align:center;font-weight:700">${r[1]}</td><td><span class="badge ${gc}">${r[2]}</span></td><td style="font-style:italic">${r[3]}</td><td>${r[4]}</td><td style="font-weight:700;color:#E65100;text-align:center">${r[5]}</td></tr>`}
+tb.innerHTML=h;
+document.getElementById('pg-info').textContent=`${s+1}-${e} de ${filtered.length}`;
+document.getElementById('pg-prev').disabled=pg===0;
+document.getElementById('pg-next').disabled=e>=filtered.length;
+document.getElementById('tbl-info').textContent=filtered.length+' registros'}
+
+function filterTbl(){const q=document.getElementById('srch').value.toLowerCase();filtered=ALL.filter(r=>r.some(c=>String(c).toLowerCase().includes(q)));pg=0;renderTbl()}
+function sortBy(c){if(sortCol===c)sortAsc=!sortAsc;else{sortCol=c;sortAsc=true}filtered.sort((a,b)=>{const va=a[c],vb=b[c];if(typeof va==='number')return sortAsc?va-vb:vb-va;return sortAsc?String(va).localeCompare(String(vb)):String(vb).localeCompare(String(va))});pg=0;renderTbl()}
+function pgPrev(){if(pg>0){pg--;renderTbl()}}
+function pgNext(){if((pg+1)*perPg<filtered.length){pg++;renderTbl()}}
+renderTbl();
+</script>
+</body>
+</html>
