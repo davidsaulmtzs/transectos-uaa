@@ -67,8 +67,8 @@ table.data tbody td{padding:7px 12px;border-bottom:1px solid #FFF3E0;color:#4E34
 .pagination button{padding:5px 14px;border:2px solid #FFD54F;background:rgba(255,255,255,.9);border-radius:15px;cursor:pointer;font-size:12px;font-family:'Quicksand',sans-serif;font-weight:600;color:#E65100}
 .pagination button:hover:not(:disabled){background:#FFF3E0}
 .pagination button:disabled{opacity:.3;cursor:default}
-.alert{background:rgba(255,243,224,.95);border:2px solid #FFB300;border-radius:12px;padding:12px 16px;margin-bottom:14px;font-size:12.5px;color:#4E342E}
-.alert b{color:#BF360C}
+.alert{background:rgba(232,245,233,.95);border:2px solid #66BB6A;border-radius:12px;padding:12px 16px;margin-bottom:14px;font-size:12.5px;color:#1B5E20}
+.alert b{color:#1B5E20}
 @media(max-width:700px){
 header{flex-wrap:wrap;height:auto;padding:10px 12px;gap:6px}
 .kpis{grid-template-columns:1fr 1fr}.kpi-val{font-size:22px}
@@ -103,11 +103,10 @@ header{flex-wrap:wrap;height:auto;padding:10px 12px;gap:6px}
 <div class="ct">Avistamientos por Grupo Animal</div>
 <div style="position:relative;height:200px"><canvas id="c1"></canvas></div>
 <div class="legend">
-<span><span class="dot" style="background:#2E7D32"></span>Ave (937)</span>
+<span><span class="dot" style="background:#2E7D32"></span>Ave (938)</span>
 <span><span class="dot" style="background:#0277BD"></span>Pez (200)</span>
 <span><span class="dot" style="background:#1565C0"></span>Mamifero (58)</span>
 <span><span class="dot" style="background:#E65100"></span>Anfibio (1)</span>
-<span><span class="dot" style="background:#7B1FA2"></span>Pajaro negro (1)</span>
 </div>
 </div>
 <div class="cc">
@@ -150,29 +149,28 @@ header{flex-wrap:wrap;height:auto;padding:10px 12px;gap:6px}
 <div id="stats" class="page">
 
 <div class="alert">
-<b>Avisos de calidad de datos (v2):</b> Se detectaron 3 fechas con anos 2027, 2028 y 2029 (probables errores de captura) en el transecto 34. La categoria "Pajaro negro" en Grupo Animal es un error de clasificacion (deberia ser "Ave"). El registro de "Peces" (200 individuos) representa un solo registro masivo. Existen variantes ortograficas no unificadas: Pinzon/Pinzon Mexicano, Gorrion/Gorrion Cejas Blancas, " Cardenalito" con espacio inicial.
+<b>Calidad de datos (v2 - corregida):</b> Se aplicaron correcciones a la base de datos: la categoria "Pajaro negro" en Grupo Animal (1 registro de Euphagus cyanocephalus) fue reclasificada como "Ave"; los 3 registros con anos 2027/2028/2029 en el transecto 34 fueron corregidos a 2026. El registro de "Peces" (200 individuos) representa un solo registro masivo. Persisten variantes ortograficas menores en nombres comunes (Pinzon/Pinzon Mexicano, Gorrion/Gorrion Cejas Blancas).
 </div>
 
 <div class="section-label">Codificacion Numerica (Codebook)</div>
 <div class="codebook"><table>
 <thead><tr><th>Variable</th><th>Descripcion</th><th>Equivalencias</th></tr></thead>
 <tbody>
-<tr><td>Grupo Animal</td><td>Clasificacion taxonomica del grupo (5 categorias)</td><td>
+<tr><td>Grupo Animal</td><td>Clasificacion taxonomica del grupo (4 categorias)</td><td>
 <span class="code-val"><b>1</b><span>Anfibio</span></span>
 <span class="code-val"><b>2</b><span>Ave</span></span>
 <span class="code-val"><b>3</b><span>Mamifero</span></span>
-<span class="code-val"><b>4</b><span>Pajaro negro (error)</span></span>
-<span class="code-val"><b>5</b><span>Pez</span></span>
+<span class="code-val"><b>4</b><span>Pez</span></span>
 </td></tr>
 <tr><td>Especie</td><td>Nombre cientifico (29 especies unicas)</td><td>
 <span class="code-val"><b>1</b><span>Anas diazi</span></span>
 <span class="code-val"><b>...</b><span>Ver Excel</span></span>
 <span class="code-val"><b>29</b><span>Zenaida asiatica</span></span>
 </td></tr>
-<tr><td>Nombre comun</td><td>Nombre comun (~32 entradas con variantes ortograficas)</td><td>
+<tr><td>Nombre comun</td><td>Nombre comun (con variantes ortograficas)</td><td>
 <span class="code-val"><b>1</b><span>Ardilla gris</span></span>
 <span class="code-val"><b>...</b><span>Ver Excel</span></span>
-<span class="code-val"><b>32</b><span>Zanate Mayor</span></span>
+<span class="code-val"><b>n</b><span>Zanate Mayor</span></span>
 </td></tr>
 <tr><td>No Transecto</td><td>Identificador del transecto (1-34, todos usados)</td><td>
 <span class="code-val"><b>1-34</b><span>Entero unico</span></span>
@@ -188,10 +186,10 @@ header{flex-wrap:wrap;height:auto;padding:10px 12px;gap:6px}
 <table class="stats-tbl">
 <thead><tr><th>Variable</th><th>N</th><th>Unicos</th><th>Moda</th><th>Media</th><th>Mediana</th><th>Min</th><th>Max</th><th>Desv. Est.</th></tr></thead>
 <tbody>
-<tr><td>Grupo Animal</td><td>290</td><td>5</td><td>Ave</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td></tr>
+<tr><td>Grupo Animal</td><td>290</td><td>4</td><td>Ave</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td></tr>
 <tr><td>Especie</td><td>290</td><td>29</td><td>Z. asiatica</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td></tr>
-<tr><td>No de Transecto</td><td>290</td><td>34</td><td>17</td><td>15.0</td><td>15</td><td>1</td><td>34</td><td>9.4</td></tr>
-<tr><td>Avistamientos</td><td>290</td><td>—</td><td>1</td><td>4.1</td><td>2.0</td><td>1</td><td>200</td><td>12.2</td></tr>
+<tr><td>No de Transecto</td><td>290</td><td>34</td><td>17</td><td>17.1</td><td>17</td><td>1</td><td>34</td><td>9.8</td></tr>
+<tr><td>Avistamientos</td><td>290</td><td>—</td><td>1</td><td>4.1</td><td>2</td><td>1</td><td>200</td><td>12.2</td></tr>
 </tbody>
 </table>
 </div>
@@ -199,14 +197,13 @@ header{flex-wrap:wrap;height:auto;padding:10px 12px;gap:6px}
 <div class="section-label">Hallazgos Clave</div>
 <div class="cc full">
 <ul style="line-height:1.8;color:#4E342E;padding-left:20px;font-size:13px">
-<li><strong>Dominancia de aves:</strong> El 78.3% de los avistamientos corresponden a aves (937/1197).</li>
-<li><strong>Especie mas abundante:</strong> Paloma Alas Blancas (<em>Zenaida asiatica</em>) con 275 avistamientos (23.0%).</li>
+<li><strong>Dominancia de aves:</strong> El 78.4% de los avistamientos corresponden a aves (938/1,197).</li>
+<li><strong>Especie mas abundante:</strong> Zenaida asiatica con 275 avistamientos (23.0%).</li>
 <li><strong>Registro masivo de peces:</strong> 200 individuos (Pisces) en un solo registro del transecto 17, representando el 16.7% del total.</li>
-<li><strong>Mamiferos:</strong> 3 especies — Gato domestico (44), Ardilla gris (11) y Mapache boreal (3).</li>
+<li><strong>Mamiferos:</strong> 3 especies — Gato doméstico (44), Ardilla gris (11), Mapache boreal (3).</li>
 <li><strong>Transecto 17:</strong> Concentra el mayor numero de avistamientos (329), seguido del transecto 31 (108).</li>
-<li><strong>Diversidad:</strong> 29 especies en 34 transectos, con 12 jornadas de muestreo entre marzo y noviembre 2026.</li>
-<li><strong>Nuevas especies (v2):</strong> Saltapared Cola Larga, Sastrecillo, Baloncillo, Tirano pipiri y Peces.</li>
-<li><strong>Crecimiento del dataset:</strong> de 228 a 290 registros (+27.2%), de 823 a 1197 avistamientos (+45.4%).</li>
+<li><strong>Diversidad:</strong> 29 especies en 34 transectos, con 9 jornadas de muestreo entre marzo y noviembre 2026.</li>
+<li><strong>Crecimiento del dataset:</strong> de 228 a 290 registros, de 823 a 1,197 avistamientos.</li>
 </ul>
 </div>
 
@@ -254,23 +251,23 @@ function showTab(id,btn){document.querySelectorAll('.page').forEach(p=>p.classLi
 const P='#FF8F00',G='#2E7D32',B='#1565C0',O='#E65100',Y='#FDD835',R='#C62828',V='#7B1FA2',AZ='#0277BD';
 const cOpts={responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}}};
 
-new Chart('c1',{type:'doughnut',data:{labels:['Ave','Pez','Mamifero','Anfibio','Pajaro negro'],datasets:[{data:[937,200,58,1,1],backgroundColor:[G,AZ,B,O,V],borderWidth:2,borderColor:'#fff'}]},options:{...cOpts,cutout:'55%'}});
+new Chart('c1',{type:'doughnut',data:{labels:['Ave','Pez','Mamifero','Anfibio'],datasets:[{data:[938,200,58,1],backgroundColor:[G,AZ,B,O],borderWidth:2,borderColor:'#fff'}]},options:{...cOpts,cutout:'55%'}});
 
-new Chart('c2',{type:'bar',data:{labels:['Paloma AB','Pinzon Mx','Peces','Zanate','Cardenalito','Chipe RA','Pato Mx','Gato dom.'],datasets:[{data:[275,215,200,170,73,61,47,44],backgroundColor:[G,'#43A047',AZ,'#66BB6A',P,'#FFB300','#81C784',B],borderRadius:6}]},options:{...cOpts,indexAxis:'y',scales:{x:{grid:{display:false}},y:{grid:{display:false}}}}});
+new Chart('c2',{type:'bar',data:{labels:["Paloma AB", "Pinzon Mx", "Peces", "Zanate", "Cardenalito", "Chipe RA", "Pato Mx", "Gato dom."],datasets:[{data:[275, 223, 200, 170, 73, 61, 47, 44],backgroundColor:[G,'#43A047',AZ,'#66BB6A',P,'#FFB300','#81C784',B],borderRadius:6}]},options:{...cOpts,indexAxis:'y',scales:{x:{grid:{display:false}},y:{grid:{display:false}}}}});
 
-new Chart('c3',{type:'bar',data:{labels:Array.from({length:34},(_,i)=>'T'+(i+1)),datasets:[{data:[32,51,21,47,26,25,31,16,40,38,19,38,17,15,37,17,329,19,10,14,27,5,5,6,23,24,31,19,4,8,108,56,15,24],backgroundColor:Array.from({length:34},(_,i)=>i===16?O:i===30?R:P),borderRadius:4}]},options:{...cOpts,scales:{x:{grid:{display:false},ticks:{font:{size:9}}},y:{grid:{color:'#FFF3E0'}}}}});
+new Chart('c3',{type:'bar',data:{labels:Array.from({length:34},(_,i)=>'T'+(i+1)),datasets:[{data:[32, 51, 21, 47, 26, 25, 31, 16, 40, 38, 19, 38, 17, 15, 37, 17, 329, 19, 10, 14, 27, 5, 5, 6, 23, 24, 31, 19, 4, 8, 108, 56, 15, 24],backgroundColor:Array.from({length:34},(_,i)=>i===16?O:i===30?R:P),borderRadius:4}]},options:{...cOpts,scales:{x:{grid:{display:false},ticks:{font:{size:9}}},y:{grid:{color:'#FFF3E0'}}}}});
 
-new Chart('c4',{type:'bar',data:{labels:['3/Oct','4/Nov','14/Mar','19/Mar','20/Mar','23/Mar','31/Mar','21/Abr','28/Abr','28/Abr/27','28/Abr/28','28/Abr/29'],datasets:[{data:[18,37,43,3,43,1,23,61,58,1,1,1],backgroundColor:P,borderRadius:6}]},options:{...cOpts,scales:{x:{grid:{display:false},ticks:{font:{size:9}}},y:{grid:{color:'#FFF3E0'}}}}});
+new Chart('c4',{type:'bar',data:{labels:["3/Oct", "14/Mar", "19/Mar", "20/Mar", "23/Mar", "31/Mar", "4/Nov", "21/Abr", "28/Abr"],datasets:[{data:[18, 43, 3, 43, 1, 23, 37, 61, 61],backgroundColor:P,borderRadius:6}]},options:{...cOpts,scales:{x:{grid:{display:false},ticks:{font:{size:9}}},y:{grid:{color:'#FFF3E0'}}}}});
 
-new Chart('c5',{type:'line',data:{labels:['3/Oct','4/Nov','14/Mar','19/Mar','20/Mar','23/Mar','31/Mar','21/Abr','28/Abr','28/Abr/27','28/Abr/28','28/Abr/29'],datasets:[{data:[61,157,125,5,153,1,133,388,170,2,1,1],borderColor:O,backgroundColor:'rgba(230,81,0,.1)',fill:true,tension:.3,pointRadius:5,pointBackgroundColor:O}]},options:{...cOpts,scales:{x:{grid:{display:false},ticks:{font:{size:9}}},y:{grid:{color:'#FFF3E0'}}}}});
+new Chart('c5',{type:'line',data:{labels:["3/Oct", "14/Mar", "19/Mar", "20/Mar", "23/Mar", "31/Mar", "4/Nov", "21/Abr", "28/Abr"],datasets:[{data:[61, 125, 5, 153, 1, 133, 157, 388, 174],borderColor:O,backgroundColor:'rgba(230,81,0,.1)',fill:true,tension:.3,pointRadius:5,pointBackgroundColor:O}]},options:{...cOpts,scales:{x:{grid:{display:false},ticks:{font:{size:9}}},y:{grid:{color:'#FFF3E0'}}}}});
 
-new Chart('c6',{type:'bar',data:{labels:['1','2','3','4','5','6-10','11-20','21+'],datasets:[{data:[107,49,34,16,21,40,18,5],backgroundColor:G,borderRadius:5}]},options:{...cOpts,scales:{x:{title:{display:true,text:'Avistamientos por registro',font:{size:10}},grid:{display:false}},y:{title:{display:true,text:'Frecuencia',font:{size:10}},grid:{color:'#FFF3E0'}}}}});
+new Chart('c6',{type:'bar',data:{labels:["1", "2", "3", "4", "5", "6-10", "11-20", "21+"],datasets:[{data:[121, 52, 26, 18, 14, 41, 16, 2],backgroundColor:G,borderRadius:5}]},options:{...cOpts,scales:{x:{title:{display:true,text:'Avistamientos por registro',font:{size:10}},grid:{display:false}},y:{title:{display:true,text:'Frecuencia',font:{size:10}},grid:{color:'#FFF3E0'}}}}});
 
 new Chart('c7',{type:'doughnut',data:{labels:['Ave (24)','Mamifero (3)','Anfibio (1)','Pez (1)'],datasets:[{data:[24,3,1,1],backgroundColor:[G,B,O,AZ],borderWidth:2,borderColor:'#fff'}]},options:{...cOpts,cutout:'50%'}});
 
-new Chart('s1',{type:'bar',data:{labels:['Ave','Mamifero','Pez','Anfibio','Pajaro negro'],datasets:[{data:[249,38,1,1,1],backgroundColor:[G,B,AZ,O,V],borderRadius:6}]},options:{...cOpts,scales:{x:{grid:{display:false}},y:{grid:{color:'#FFF3E0'}}}}});
+new Chart('s1',{type:'bar',data:{labels:['Ave','Mamifero','Pez','Anfibio'],datasets:[{data:[250,38,1,1],backgroundColor:[G,B,AZ,O],borderRadius:6}]},options:{...cOpts,scales:{x:{grid:{display:false}},y:{grid:{color:'#FFF3E0'}}}}});
 
-new Chart('s2',{type:'bar',data:{labels:['Paloma AB','Pinzon Mx','Peces','Zanate Mayor','Cardenalito'],datasets:[{data:[275,215,200,170,73],backgroundColor:[G,'#43A047',AZ,'#66BB6A',P],borderRadius:6}]},options:{...cOpts,indexAxis:'y',scales:{x:{grid:{display:false}},y:{grid:{display:false}}}}});
+new Chart('s2',{type:'bar',data:{labels:["Paloma AB", "Pinzon Mx", "Peces", "Zanate", "Cardenalito"],datasets:[{data:[275, 223, 200, 170, 73],backgroundColor:[G,'#43A047',AZ,'#66BB6A',P],borderRadius:6}]},options:{...cOpts,indexAxis:'y',scales:{x:{grid:{display:false}},y:{grid:{display:false}}}}});
 
 const ALL=[
 ["03/10/2026",1,"Ave","Quiscalus mexicanus","Zanate Mayor",8],
@@ -361,7 +358,7 @@ const ALL=[
 ["20/03/2026",21,"Ave","Setophaga coronata","Chipe Rabadilla Amarilla",1],
 ["20/03/2026",21,"Ave","Quiscalus mexicanus","Zanate Mayor",1],
 ["20/03/2026",21,"Ave","Haemorhous mexicanus","Pinzón Mexicano",1],
-["20/03/2026",22,"Pájaro negro","Euphagus cyanocephalus","Tordo Ojos Amarillos",1],
+["20/03/2026",22,"Ave","Euphagus cyanocephalus","Tordo Ojos Amarillos",1],
 ["20/03/2026",23,"Ave","Zenaida asiatica","Paloma Alas Blancas",1],
 ["20/03/2026",24,"Mamífero","Felis catus","Gato doméstico",1],
 ["20/03/2026",24,"Mamífero","Felis catus","Gato doméstico",1],
@@ -559,9 +556,9 @@ const ALL=[
 ["28/4/2026",32,"Ave","Cynanthus latirostris","Colibrí Pico Ancho Norteño",1],
 ["28/4/2026",32,"Ave","Haemorhous mexicanus","Pinzón Mexicano",1],
 ["28/4/2026",33,"Ave","Zenaida asiatica","Paloma Alas Blancas",3],
-["28/4/2027",34,"Ave","Zenaida asiatica","Paloma Alas Blancas",2],
-["28/4/2028",34,"Ave","Haemorhous mexicanus","Pinzón Mexicano",1],
-["28/4/2029",34,"Ave","Quiscalus mexicanus","Zanate Mayor",1],
+["28/4/2026",34,"Ave","Zenaida asiatica","Paloma Alas Blancas",2],
+["28/4/2026",34,"Ave","Haemorhous mexicanus","Pinzón Mexicano",1],
+["28/4/2026",34,"Ave","Quiscalus mexicanus","Zanate Mayor",1],
 ["21/4/2026",17,"Pez","Pisces","Peces",200]
 ];
 let filtered=ALL.slice(),sortCol=-1,sortAsc=true,pg=0,perPg=25;
