@@ -81,7 +81,7 @@ header{flex-wrap:wrap;height:auto;padding:10px 12px;gap:6px}
 <div class="flower">🌸</div><div class="flower">🌼</div><div class="flower">🌺</div>
 <div class="flower">🌻</div><div class="flower">🌷</div><div class="flower">🌸</div>
 <header>
-<div class="brand">TRANSECTOS<span>.uaa v2</span></div>
+<div class="brand">Transectos<span> UAA</span></div>
 <nav>
 <button class="active" onclick="showTab('dash',this)">Dashboard</button>
 <button onclick="showTab('stats',this)">Estadisticas</button>
@@ -148,10 +148,6 @@ header{flex-wrap:wrap;height:auto;padding:10px 12px;gap:6px}
 
 <div id="stats" class="page">
 
-<div class="alert">
-<b>Calidad de datos (v3 - corregida):</b> Se aplicaron correcciones a la base de datos: (1) "Pajaro negro" reclasificado a "Ave" (Euphagus cyanocephalus); (2) 3 fechas con anos 2027/2028/2029 corregidas a 2026 (transecto 34); (3) fechas 03/10/2026 y 04/11/2026 corregidas por inversion dia-mes (-> 10/03/2026 y 11/04/2026); (4) "Anfibio" reclasificado a "Reptil" (Aspidoscelis gularis es lagartija). El registro de "Peces" (200 individuos) representa un solo registro masivo. Persisten variantes ortograficas menores en nombres comunes (Pinzon/Pinzon Mexicano, Gorrion/Gorrion Cejas Blancas).
-</div>
-
 <div class="section-label">Codificacion Numerica (Codebook)</div>
 <div class="codebook"><table>
 <thead><tr><th>Variable</th><th>Descripcion</th><th>Equivalencias</th></tr></thead>
@@ -202,7 +198,7 @@ header{flex-wrap:wrap;height:auto;padding:10px 12px;gap:6px}
 <li><strong>Registro masivo de peces:</strong> 200 individuos (Pisces) en un solo registro del transecto 17, representando el 16.7% del total.</li>
 <li><strong>Mamiferos:</strong> 3 especies — Gato doméstico (44), Ardilla gris (11), Mapache boreal (3).</li>
 <li><strong>Transecto 17:</strong> Concentra el mayor numero de avistamientos (329), seguido del transecto 31 (108).</li>
-<li><strong>Diversidad:</strong> 29 especies en 34 transectos, con 9 jornadas de muestreo entre marzo y noviembre 2026.</li>
+<li><strong>Diversidad:</strong> 29 especies en 34 transectos, con 7 jornadas de muestreo entre marzo y abril 2026.</li>
 <li><strong>Crecimiento del dataset:</strong> de 228 a 290 registros, de 823 a 1,197 avistamientos.</li>
 </ul>
 </div>
@@ -257,9 +253,9 @@ new Chart('c2',{type:'bar',data:{labels:["Paloma AB", "Pinzon Mx", "Peces", "Zan
 
 new Chart('c3',{type:'bar',data:{labels:Array.from({length:34},(_,i)=>'T'+(i+1)),datasets:[{data:[32, 51, 21, 47, 26, 25, 31, 16, 40, 38, 19, 38, 17, 15, 37, 17, 329, 19, 10, 14, 27, 5, 5, 6, 23, 24, 31, 19, 4, 8, 108, 56, 15, 24],backgroundColor:Array.from({length:34},(_,i)=>i===16?O:i===30?R:P),borderRadius:4}]},options:{...cOpts,scales:{x:{grid:{display:false},ticks:{font:{size:9}}},y:{grid:{color:'#FFF3E0'}}}}});
 
-new Chart('c4',{type:'bar',data:{labels:["10/Mar", "14/Mar", "19/Mar", "20/Mar", "23/Mar", "31/Mar", "11/Abr", "21/Abr", "28/Abr"],datasets:[{data:[18, 43, 3, 43, 1, 23, 37, 61, 61],backgroundColor:P,borderRadius:6}]},options:{...cOpts,scales:{x:{grid:{display:false},ticks:{font:{size:9}}},y:{grid:{color:'#FFF3E0'}}}}});
+new Chart('c4',{type:'bar',data:{labels:["10/Mar", "14/Mar", "20/Mar", "31/Mar", "11/Abr", "21/Abr", "28/Abr"],datasets:[{data:[18, 43, 43, 23, 37, 61, 61],backgroundColor:P,borderRadius:6}]},options:{...cOpts,scales:{x:{grid:{display:false},ticks:{font:{size:9}}},y:{grid:{color:'#FFF3E0'}}}}});
 
-new Chart('c5',{type:'line',data:{labels:["10/Mar", "14/Mar", "19/Mar", "20/Mar", "23/Mar", "31/Mar", "11/Abr", "21/Abr", "28/Abr"],datasets:[{data:[61, 125, 5, 153, 1, 133, 157, 388, 174],borderColor:O,backgroundColor:'rgba(230,81,0,.1)',fill:true,tension:.3,pointRadius:5,pointBackgroundColor:O}]},options:{...cOpts,scales:{x:{grid:{display:false},ticks:{font:{size:9}}},y:{grid:{color:'#FFF3E0'}}}}});
+new Chart('c5',{type:'line',data:{labels:["10/Mar", "14/Mar", "20/Mar", "31/Mar", "11/Abr", "21/Abr", "28/Abr"],datasets:[{data:[61, 125, 153, 133, 157, 388, 174],borderColor:O,backgroundColor:'rgba(230,81,0,.1)',fill:true,tension:.3,pointRadius:5,pointBackgroundColor:O}]},options:{...cOpts,scales:{x:{grid:{display:false},ticks:{font:{size:9}}},y:{grid:{color:'#FFF3E0'}}}}});
 
 new Chart('c6',{type:'bar',data:{labels:["1", "2", "3", "4", "5", "6-10", "11-20", "21+"],datasets:[{data:[121, 52, 26, 18, 14, 41, 16, 2],backgroundColor:G,borderRadius:5}]},options:{...cOpts,scales:{x:{title:{display:true,text:'Avistamientos por registro',font:{size:10}},grid:{display:false}},y:{title:{display:true,text:'Frecuencia',font:{size:10}},grid:{color:'#FFF3E0'}}}}});
 
